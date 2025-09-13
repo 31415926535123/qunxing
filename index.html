@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>星穹管理者 - Star Overseer</title>
     <link href="./output.css" rel="stylesheet">
+    <script src="./game.js" defer></script>
 </head>
 <body class="bg-gray-900 text-white min-h-screen overflow-hidden">
     <!-- 顶部资源栏 -->
@@ -17,7 +18,6 @@
             <div class="flex flex-wrap items-center gap-2 md:gap-4">
                 <!-- 能量 -->
                 <div class="flex items-center gap-1 bg-gray-700 px-2 py-1 rounded">
-                    <div class="w-4 h-4 bg-yellow-400 rounded-full"></div>
                     <span class="text-sm font-medium">能量</span>
                     <span class="text-sm text-green-400">15,000</span>
                     <span class="text-xs text-green-400">(+205/min)</span>
@@ -25,7 +25,6 @@
                 
                 <!-- 金属 -->
                 <div class="flex items-center gap-1 bg-gray-700 px-2 py-1 rounded">
-                    <div class="w-4 h-4 bg-gray-400 rounded-full"></div>
                     <span class="text-sm font-medium">金属</span>
                     <span class="text-sm text-green-400">8,000</span>
                     <span class="text-xs text-green-400">(+150/min)</span>
@@ -33,7 +32,6 @@
                 
                 <!-- 晶体 -->
                 <div class="flex items-center gap-1 bg-gray-700 px-2 py-1 rounded">
-                    <div class="w-4 h-4 bg-blue-400 rounded-full"></div>
                     <span class="text-sm font-medium">晶体</span>
                     <span class="text-sm text-green-400">3,500</span>
                     <span class="text-xs text-green-400">(+45/min)</span>
@@ -41,7 +39,6 @@
                 
                 <!-- 暗物质 -->
                 <div class="flex items-center gap-1 bg-gray-700 px-2 py-1 rounded">
-                    <div class="w-4 h-4 bg-purple-500 rounded-full"></div>
                     <span class="text-sm font-medium">暗物质</span>
                     <span class="text-sm text-purple-400">125</span>
                 </div>
@@ -58,34 +55,24 @@
     <div class="flex h-[calc(100vh-120px)]">
         <!-- 侧边栏导航 -->
         <div class="w-16 md:w-20 bg-gray-800 border-r border-gray-700 flex flex-col items-center py-4 gap-4">
-            <button class="nav-btn active w-12 h-12 bg-blue-600 hover:bg-blue-700 rounded-lg flex items-center justify-center transition-colors">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                </svg>
+            <button class="nav-btn active group w-12 h-12 bg-blue-600 hover:bg-blue-700 rounded-lg flex flex-col items-center justify-center transition-colors" data-view="building">
+                <span class="text-xs mt-1">建筑</span>
             </button>
             
-            <button class="nav-btn w-12 h-12 bg-gray-700 hover:bg-gray-600 rounded-lg flex items-center justify-center transition-colors">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
-                </svg>
+            <button class="nav-btn group w-12 h-12 bg-gray-700 hover:bg-gray-600 rounded-lg flex flex-col items-center justify-center transition-colors" data-view="tech">
+                <span class="text-xs mt-1">科技</span>
             </button>
             
-            <button class="nav-btn w-12 h-12 bg-gray-700 hover:bg-gray-600 rounded-lg flex items-center justify-center transition-colors">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                </svg>
+            <button class="nav-btn group w-12 h-12 bg-gray-700 hover:bg-gray-600 rounded-lg flex flex-col items-center justify-center transition-colors" data-view="fleet">
+                <span class="text-xs mt-1">舰队</span>
             </button>
             
-            <button class="nav-btn w-12 h-12 bg-gray-700 hover:bg-gray-600 rounded-lg flex items-center justify-center transition-colors">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path>
-                </svg>
+            <button class="nav-btn group w-12 h-12 bg-gray-700 hover:bg-gray-600 rounded-lg flex flex-col items-center justify-center transition-colors" data-view="exploration">
+                <span class="text-xs mt-1">探索</span>
             </button>
             
-            <button class="nav-btn w-12 h-12 bg-gray-700 hover:bg-gray-600 rounded-lg flex items-center justify-center transition-colors">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
-                </svg>
+            <button class="nav-btn group w-12 h-12 bg-gray-700 hover:bg-gray-600 rounded-lg flex flex-col items-center justify-center transition-colors" data-view="event">
+                <span class="text-xs mt-1">事件</span>
             </button>
         </div>
         
@@ -93,7 +80,7 @@
         <div class="flex-1 flex flex-col md:flex-row">
             <!-- 左侧主内容 -->
             <div class="flex-1 bg-gray-850 p-4 overflow-auto">
-                <div class="mb-4">
+                <div id="building-view" class="view-content">
                     <h2 class="text-xl font-bold mb-4 text-blue-400">行星视图</h2>
                     
                     <!-- 行星网格 -->
@@ -103,17 +90,14 @@
                             <div class="text-gray-400 text-sm">空槽位</div>
                         </div>
                         <div class="building-slot bg-gray-700 border border-gray-600 rounded-lg p-4 text-center">
-                            <div class="w-8 h-8 bg-yellow-500 rounded-full mx-auto mb-2"></div>
                             <div class="text-sm font-medium">金属矿场</div>
                             <div class="text-xs text-gray-400">Lv.3</div>
                         </div>
                         <div class="building-slot bg-gray-700 border border-gray-600 rounded-lg p-4 text-center">
-                            <div class="w-8 h-8 bg-blue-500 rounded-full mx-auto mb-2"></div>
                             <div class="text-sm font-medium">晶体矿场</div>
                             <div class="text-xs text-gray-400">Lv.2</div>
                         </div>
                         <div class="building-slot bg-gray-700 border border-gray-600 rounded-lg p-4 text-center">
-                            <div class="w-8 h-8 bg-yellow-400 rounded-full mx-auto mb-2"></div>
                             <div class="text-sm font-medium">聚变电厂</div>
                             <div class="text-xs text-gray-400">Lv.1</div>
                         </div>
@@ -129,48 +113,189 @@
                     <h3 class="text-lg font-semibold mb-3 text-gray-300">可建造建筑</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                         <div class="bg-gray-700 border border-gray-600 rounded-lg p-3 hover:bg-gray-600 transition-colors cursor-pointer">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 bg-gray-500 rounded-full flex items-center justify-center">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                                    </svg>
-                                </div>
-                                <div class="flex-1">
-                                    <div class="font-medium">研究实验室</div>
-                                    <div class="text-xs text-gray-400">生产科研点数</div>
-                                    <div class="text-xs text-yellow-400 mt-1">金属: 500 | 晶体: 200</div>
-                                </div>
+                            <div class="flex-1">
+                                <div class="font-medium">研究实验室</div>
+                                <div class="text-xs text-gray-400">生产科研点数</div>
+                                <div class="text-xs text-yellow-400 mt-1">金属: 500 | 晶体: 200</div>
                             </div>
                         </div>
                         
                         <div class="bg-gray-700 border border-gray-600 rounded-lg p-3 hover:bg-gray-600 transition-colors cursor-pointer">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"></path>
-                                    </svg>
-                                </div>
-                                <div class="flex-1">
-                                    <div class="font-medium">合金冶炼厂</div>
-                                    <div class="text-xs text-gray-400">生产合金</div>
-                                    <div class="text-xs text-yellow-400 mt-1">金属: 800 | 能量: 300</div>
-                                </div>
+                            <div class="flex-1">
+                                <div class="font-medium">合金冶炼厂</div>
+                                <div class="text-xs text-gray-400">生产合金</div>
+                                <div class="text-xs text-yellow-400 mt-1">金属: 800 | 能量: 300</div>
                             </div>
                         </div>
                         
                         <div class="bg-gray-700 border border-gray-600 rounded-lg p-3 hover:bg-gray-600 transition-colors cursor-pointer">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
-                                    </svg>
+                            <div class="flex-1">
+                                <div class="font-medium">仓储仓库</div>
+                                <div class="text-xs text-gray-400">提升资源容量</div>
+                                <div class="text-xs text-yellow-400 mt-1">金属: 300 | 晶体: 150</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 科技界面 -->
+                <div id="tech-view" class="view-content hidden">
+                    <h2 class="text-xl font-bold mb-4 text-blue-400">科技树</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- 物理学分支 -->
+                        <div class="bg-gray-800 rounded-lg p-4">
+                            <h3 class="font-semibold text-blue-300 mb-3">物理学</h3>
+                            <div class="space-y-2">
+                                <div class="tech-node bg-green-600 border border-green-500 rounded p-2 text-sm">
+                                    <div class="font-medium">基础行星学</div>
+                                    <div class="text-xs text-gray-200">已研究</div>
                                 </div>
-                                <div class="flex-1">
-                                    <div class="font-medium">仓储仓库</div>
-                                    <div class="text-xs text-gray-400">提升资源容量</div>
-                                    <div class="text-xs text-yellow-400 mt-1">金属: 300 | 晶体: 150</div>
+                                <div class="tech-node bg-blue-600 border border-blue-500 rounded p-2 text-sm">
+                                    <div class="font-medium">磁约束聚变</div>
+                                    <div class="text-xs text-gray-200">研究中...</div>
                                 </div>
+                                <div class="tech-node bg-gray-700 border border-gray-600 rounded p-2 text-sm">
+                                    <div class="font-medium">量子计算</div>
+                                    <div class="text-xs text-gray-400">未解锁</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 工程学分支 -->
+                        <div class="bg-gray-800 rounded-lg p-4">
+                            <h3 class="font-semibold text-blue-300 mb-3">工程学</h3>
+                            <div class="space-y-2">
+                                <div class="tech-node bg-green-600 border border-green-500 rounded p-2 text-sm">
+                                    <div class="font-medium">储能技术</div>
+                                    <div class="text-xs text-gray-200">已研究</div>
+                                </div>
+                                <div class="tech-node bg-gray-700 border border-gray-600 rounded p-2 text-sm">
+                                    <div class="font-medium">高级冶金学</div>
+                                    <div class="text-xs text-gray-400">未解锁</div>
+                                </div>
+                                <div class="tech-node bg-gray-700 border border-gray-600 rounded p-2 text-sm">
+                                    <div class="font-medium">轨道结构</div>
+                                    <div class="text-xs text-gray-400">未解锁</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 舰队界面 -->
+                <div id="fleet-view" class="view-content hidden">
+                    <h2 class="text-xl font-bold mb-4 text-blue-400">舰队管理</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- 现有舰队 -->
+                        <div class="bg-gray-800 rounded-lg p-4">
+                            <h3 class="font-semibold text-blue-300 mb-3">现有舰队</h3>
+                            <div class="space-y-2">
+                                <div class="fleet-item bg-gray-700 border border-gray-600 rounded p-2">
+                                    <div class="font-medium text-sm">侦查舰 x 3</div>
+                                    <div class="text-xs text-gray-400">状态: 待命</div>
+                                </div>
+                                <div class="fleet-item bg-gray-700 border border-gray-600 rounded p-2">
+                                    <div class="font-medium text-sm">殖民舰 x 1</div>
+                                    <div class="text-xs text-gray-400">状态: 建造中</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 可建造舰船 -->
+                        <div class="bg-gray-800 rounded-lg p-4">
+                            <h3 class="font-semibold text-blue-300 mb-3">可建造舰船</h3>
+                            <div class="space-y-2">
+                                <div class="ship-item bg-gray-700 border border-gray-600 rounded p-2 hover:bg-gray-600 cursor-pointer">
+                                    <div class="font-medium text-sm">侦查舰</div>
+                                    <div class="text-xs text-yellow-400">金属: 200 | 晶体: 100</div>
+                                </div>
+                                <div class="ship-item bg-gray-700 border border-gray-600 rounded p-2 hover:bg-gray-600 cursor-pointer">
+                                    <div class="font-medium text-sm">殖民舰</div>
+                                    <div class="text-xs text-yellow-400">金属: 1000 | 晶体: 500</div>
+                                </div>
+                                <div class="ship-item bg-gray-700 border border-gray-600 rounded p-2 opacity-50">
+                                    <div class="font-medium text-sm">护卫舰</div>
+                                    <div class="text-xs text-gray-400">需要: 脉冲武器科技</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 探索界面 -->
+                <div id="exploration-view" class="view-content hidden">
+                    <h2 class="text-xl font-bold mb-4 text-blue-400">星系探索</h2>
+                    <div class="bg-gray-800 rounded-lg p-4 mb-4">
+                        <div class="grid grid-cols-3 gap-4">
+                            <!-- 太阳系 -->
+                            <div class="star-system bg-blue-600 border border-blue-500 rounded-lg p-3 text-center cursor-pointer hover:bg-blue-700">
+                                <div class="text-lg">☀️</div>
+                                <div class="text-sm font-medium">太阳系</div>
+                                <div class="text-xs text-gray-200">已探索</div>
+                            </div>
+                            
+                            <!-- 比邻星 -->
+                            <div class="star-system bg-orange-600 border border-orange-500 rounded-lg p-3 text-center cursor-pointer hover:bg-orange-700">
+                                <div class="text-lg">⭐</div>
+                                <div class="text-sm font-medium">比邻星</div>
+                                <div class="text-xs text-gray-200">探索中...</div>
+                            </div>
+                            
+                            <!-- 未知星系 -->
+                            <div class="star-system bg-gray-700 border border-gray-600 rounded-lg p-3 text-center cursor-pointer hover:bg-gray-600">
+                                <div class="text-lg">❓</div>
+                                <div class="text-sm font-medium">未知星系</div>
+                                <div class="text-xs text-gray-400">未探索</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 探索详情 -->
+                    <div class="bg-gray-800 rounded-lg p-4">
+                        <h3 class="font-semibold text-blue-300 mb-3">探索任务</h3>
+                        <div class="space-y-2">
+                            <div class="mission-item bg-gray-700 border border-gray-600 rounded p-2">
+                                <div class="font-medium text-sm">比邻星探索</div>
+                                <div class="text-xs text-gray-400">预计完成: 2小时</div>
+                                <div class="w-full bg-gray-600 rounded-full h-2 mt-1">
+                                    <div class="bg-orange-500 h-2 rounded-full" style="width: 30%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 事件界面 -->
+                <div id="event-view" class="view-content hidden">
+                    <h2 class="text-xl font-bold mb-4 text-blue-400">事件日志</h2>
+                    <div class="space-y-3">
+                        <!-- 近期事件 -->
+                        <div class="event-item bg-gray-800 border-l-4 border-green-500 rounded-r p-3">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <div class="font-medium text-green-400">太阳耀斑爆发</div>
+                                    <div class="text-sm text-gray-300">能量产量暂时提升50%，持续1小时</div>
+                                </div>
+                                <div class="text-xs text-gray-400">2分钟前</div>
+                            </div>
+                        </div>
+                        
+                        <div class="event-item bg-gray-800 border-l-4 border-blue-500 rounded-r p-3">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <div class="font-medium text-blue-400">研究突破</div>
+                                    <div class="text-sm text-gray-300">磁约束聚变研究进度加快</div>
+                                </div>
+                                <div class="text-xs text-gray-400">15分钟前</div>
+                            </div>
+                        </div>
+                        
+                        <div class="event-item bg-gray-800 border-l-4 border-yellow-500 rounded-r p-3">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <div class="font-medium text-yellow-400">资源短缺警告</div>
+                                    <div class="text-sm text-gray-300">晶体储量低于安全水平</div>
+                                </div>
+                                <div class="text-xs text-gray-400">1小时前</div>
                             </div>
                         </div>
                     </div>

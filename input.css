@@ -1,1 +1,16 @@
 @import "tailwindcss";
+
+/* 修复界面隐藏问题 */
+.hidden {
+  display: none !important;
+}
+
+/* 确保div元素不会干扰隐藏 */
+div.hidden {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  position: absolute !important;
+  left: -9999px !important;
+  top: -9999px !important;
+}
