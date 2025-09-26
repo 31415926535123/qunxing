@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>简单取色器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .color-picker-container {
+            text-align: center;
+        }
+        
+        .color-picker {
+            width: 100px;
+            height: 100px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            margin: 20px auto;
+            display: block;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .color-display {
+            width: 200px;
+            height: 100px;
+            margin: 20px auto;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        
+        .color-values {
+            margin-top: 20px;
+            text-align: left;
+        }
+        
+        .color-value {
+            margin: 10px 0;
+            padding: 8px;
+            background-color: white;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        
+        .color-value label {
+            font-weight: bold;
+            display: inline-block;
+            width: 80px;
+        }
+        
+        .color-value span {
+            font-family: monospace;
+            background-color: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <h1>简单取色器</h1>
+    
+    <div class="color-picker-container">
+        <input type="color" id="colorPicker" class="color-picker" value="#3498db">
+        
+        <div id="colorDisplay" class="color-display" style="background-color: #3498db;">
+            颜色预览
+        </div>
+        
+        <div class="color-values">
+            <div class="color-value">
+                <label>HEX:</label>
+                <span id="hexValue">#3498db</span>
+            </div>
+            <div class="color-value">
+                <label>RGB:</label>
+                <span id="rgbValue">rgb(52, 152, 219)</span>
+            </div>
+            <div class="color-value">
+                <label>HSL:</label>
+                <span id="hslValue">hsl(204, 70%, 53%)</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const colorPicker = document.getElementById('colorPicker');
+        const colorDisplay = document.getElementById('colorDisplay');
+        const hexValue = document.getElementById('hexValue');
+        const rgbValue = document.getElementById('rgbValue');
+        const hslValue = document.getElementById('hslValue');
+
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+
+        function rgbToHsl(r, g, b) {
+            r /= 255;
+            g /= 255;
+            b /= 255;
+            
+            const max = Math.max(r, g, b);
+            const min = Math.min(r, g, b);
+            let h, s, l = (max + min) / 2;
+
+            if (max === min) {
+                h = s = 0;
+            } else {
+                const d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                
+                switch (max) {
+                    case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                    case g: h = (b - r) / d + 2; break;
+                    case b: h = (r - g) / d + 4; break;
+                }
+                h /= 6;
+            }
+
+            return {
+                h: Math.round(h * 360),
+                s: Math.round(s * 100),
+                l: Math.round(l * 100)
+            };
+        }
+
+        function updateColorValues(hexColor) {
+            const rgb = hexToRgb(hexColor);
+            const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+            
+            colorDisplay.style.backgroundColor = hexColor;
+            hexValue.textContent = hexColor;
+            rgbValue.textContent = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+            hslValue.textContent = `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`;
+            
+            // 根据背景色调整文字颜色
+            const brightness = (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000;
+            colorDisplay.style.color = brightness > 128 ? '#000' : '#fff';
+        }
+
+        colorPicker.addEventListener('input', function(e) {
+            updateColorValues(e.target.value);
+        });
+
+        // 初始化
+        updateColorValues(colorPicker.value);
+    </script>
+</body>
+</html>

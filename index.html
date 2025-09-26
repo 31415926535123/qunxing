@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>星穹管理者 - Star Overseer</title>
+    <link href="./output.css" rel="stylesheet">
+    <script src="./game.js" defer></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen ">
+    <!-- 顶部资源栏 -->
+    <div class="bg-gray-800 border-b border-gray-700 p-2 md:p-4">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+                <h1 class="text-lg md:text-xl font-bold text-blue-400">星穹管理者</h1>
+            </div>
+            
+            <div class="flex flex-wrap items-center gap-2 md:gap-4">
+                <!-- 能量 -->
+                <div class="flex items-center gap-1 bg-gray-700 px-2 py-1 rounded">
+                    <span class="text-sm font-medium">能量</span>
+                    <span class="text-sm text-green-400">15,000</span>
+                    <span class="text-xs text-green-400">(+205/min)</span>
+                </div>
+                
+                <!-- 金属 -->
+                <div class="flex items-center gap-1 bg-gray-700 px-2 py-1 rounded">
+                    <span class="text-sm font-medium">金属</span>
+                    <span class="text-sm text-green-400">8,000</span>
+                    <span class="text-xs text-green-400">(+150/min)</span>
+                </div>
+                
+                <!-- 晶体 -->
+                <div class="flex items-center gap-1 bg-gray-700 px-2 py-1 rounded">
+                    <span class="text-sm font-medium">晶体</span>
+                    <span class="text-sm text-green-400">3,500</span>
+                    <span class="text-xs text-green-400">(+45/min)</span>
+                </div>
+                
+                <!-- 暗物质 -->
+                <div class="flex items-center gap-1 bg-gray-700 px-2 py-1 rounded">
+                    <span class="text-sm font-medium">暗物质</span>
+                    <span class="text-sm text-purple-400">125</span>
+                </div>
+                
+                <!-- 菜单按钮 -->
+                <button class="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm transition-colors">
+                    菜单
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 主要内容区域 -->
+    <div class="flex flex-1 min-h-0">
+        <!-- 侧边栏导航 -->
+        <div class="w-16 md:w-20 bg-gray-800 border-r border-gray-700 flex flex-col items-center py-4 gap-4">
+                        
+            <button class="nav-btn group w-12 h-12 bg-gray-700 hover:bg-gray-600 rounded-lg flex flex-col items-center justify-center transition-colors" data-view="asteroid" id="nav-asteroid">
+                <span class="text-xs mt-1">首页</span>
+            </button>
+            <button class="nav-btn group w-12 h-12 bg-gray-700 hover:bg-blue-700 rounded-lg flex flex-col items-center justify-center transition-colors" data-view="building">
+                <span class="text-xs mt-1">建筑</span>
+            </button>
+            
+            <button class="nav-btn group w-12 h-12 bg-gray-700 hover:bg-gray-600 rounded-lg flex flex-col items-center justify-center transition-colors" data-view="tech">
+                <span class="text-xs mt-1">科技</span>
+            </button>
+            
+            <button class="nav-btn group w-12 h-12 bg-gray-700 hover:bg-gray-600 rounded-lg flex flex-col items-center justify-center transition-colors" data-view="fleet">
+                <span class="text-xs mt-1">舰队</span>
+            </button>
+            
+            <button class="nav-btn group w-12 h-12 bg-gray-700 hover:bg-gray-600 rounded-lg flex flex-col items-center justify-center transition-colors" data-view="exploration">
+                <span class="text-xs mt-1">探索</span>
+            </button>
+            
+            <button class="nav-btn group w-12 h-12 bg-gray-700 hover:bg-gray-600 rounded-lg flex flex-col items-center justify-center transition-colors" data-view="event">
+                <span class="text-xs mt-1">事件</span>
+            </button>
+        </div>
+        
+        <!-- 主工作区 -->
+        <div class="flex-1 flex flex-col md:flex-row min-h-0">
+            <!-- 左侧主内容 -->
+            <div class="flex-1 bg-gray-850 p-4 overflow-auto min-w-0" id="main-content">
+                <!-- 界面内容将由JavaScript动态生成 -->
+            </div>
+            
+            
+    <!-- 底部状态栏 -->
+    <div class="bg-gray-800 border-t border-gray-700 px-4 py-2">
+        <div class="flex flex-wrap items-center justify-between gap-2 text-sm">
+            <div class="flex items-center gap-4">
+                <span>宇宙历 025年</span>
+                <span class="text-blue-400">正在研究: 超空间理论 (剩余: 45min)</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="text-green-400">警报: 无</span>
+                <span>在线</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
