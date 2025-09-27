@@ -1,39 +1,17 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import ResourceBar from "@/components/ui/ResourceBar";
+import { ResourceManager } from "@/hooks/useResourceManager";
 
 export default function Home() {
   const [currentView, setCurrentView] = useState("");
-
-  // 资源状态
-  const [resources, setResources] = useState({
-    energy: 0,
-    metal: 0,
-    crystal: 0,
-    darkMatter: 0,
-  });
-  const [productionRates, setProductionRates] = useState({
-    energy: 20,
-    metal: 0,
-    crystal: 0,
-    darkMatter: 0,
-  });
   // 界面切换函数
   const handleViewChange = (view) => {
     setCurrentView(view);
   };
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setResources((prev) => ({
-        ...prev,
-        energy: prev.energy + productionRates.energy / 60,
-      }));
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [productionRates.energy]);
   // 创建3D星空场景组件
   const BackView = () => {
     const containerRef = useRef(null);
@@ -471,161 +449,109 @@ export default function Home() {
   };
 
   return (
-    <div className="bg-gray-900 text-white min-h-screen flex flex-col">
-      {/* 顶部资源栏 */}
-      <div className="bg-gray-800 border-b border-gray-700 p-2 md:p-4">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <h1 className="text-lg md:text-xl font-bold text-blue-400"></h1>
+    <ResourceManager>
+      {({ resources, productionRates }) => (
+        <div className="bg-gray-900 text-white min-h-screen flex flex-col">
+          {/* 顶部资源栏 */}
+          <ResourceBar
+            resources={resources}
+            productionRates={productionRates}
+          />
+
+          {/* 主要内容区域 */}
+          <div className="flex flex-1 min-h-0">
+            {/* 侧边栏导航 */}
+            <div className="w-16 md:w-20 bg-gray-800 border-r border-gray-700 flex flex-col items-center py-4 gap-4">
+              <button
+                className={`nav-btn group w-12 h-12 rounded-lg flex flex-col items-center justify-center transition-colors ${
+                  currentView === "back"
+                    ? "bg-blue-700"
+                    : "bg-gray-700 hover:bg-gray-600"
+                }`}
+                onClick={() => handleViewChange("back")}
+              >
+                <span className="text-xs mt-1">星空</span>
+              </button>
+
+              <button
+                className={`nav-btn group w-12 h-12 rounded-lg flex flex-col items-center justify-center transition-colors ${
+                  currentView === "building"
+                    ? "bg-blue-700"
+                    : "bg-gray-700 hover:bg-gray-600"
+                }`}
+                onClick={() => handleViewChange("building")}
+              >
+                <span className="text-xs mt-1">建筑</span>
+              </button>
+
+              <button
+                className={`nav-btn group w-12 h-12 rounded-lg flex flex-col items-center justify-center transition-colors ${
+                  currentView === "tech"
+                    ? "bg-blue-700"
+                    : "bg-gray-700 hover:bg-gray-600"
+                }`}
+                onClick={() => handleViewChange("tech")}
+              >
+                <span className="text-xs mt-1">科技</span>
+              </button>
+
+              <button
+                className={`nav-btn group w-12 h-12 rounded-lg flex flex-col items-center justify-center transition-colors ${
+                  currentView === "fleet"
+                    ? "bg-blue-700"
+                    : "bg-gray-700 hover:bg-gray-600"
+                }`}
+                onClick={() => handleViewChange("fleet")}
+              >
+                <span className="text-xs mt-1">舰队</span>
+              </button>
+
+              <button
+                className={`nav-btn group w-12 h-12 rounded-lg flex flex-col items-center justify-center transition-colors ${
+                  currentView === "exploration"
+                    ? "bg-blue-700"
+                    : "bg-gray-700 hover:bg-gray-600"
+                }`}
+                onClick={() => handleViewChange("exploration")}
+              >
+                <span className="text-xs mt-1">探索</span>
+              </button>
+
+              <button
+                className={`nav-btn group w-12 h-12 rounded-lg flex flex-col items-center justify-center transition-colors ${
+                  currentView === "event"
+                    ? "bg-blue-700"
+                    : "bg-gray-700 hover:bg-gray-600"
+                }`}
+                onClick={() => handleViewChange("event")}
+              >
+                <span className="text-xs mt-1">事件</span>
+              </button>
+            </div>
+
+            {/* 主工作区 */}
+            <div className="flex-1 bg-gray-850 p-4 overflow-auto min-w-0">
+              {renderMainContent()}
+            </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2 md:gap-4">
-            {/* 能量 */}
-            <div className="flex items-center gap-1 bg-gray-700 px-2 py-1 rounded">
-              <span className="text-sm font-medium">能量</span>
-              <span className="text-sm text-green-400">
-                {resources.energy.toLocaleString()}
-              </span>
-              <span className="text-xs text-green-400">
-                (+{productionRates.energy}/min)
-              </span>
-            </div>
-
-            {/* 金属 */}
-            <div className="flex items-center gap-1 bg-gray-700 px-2 py-1 rounded">
-              <span className="text-sm font-medium">金属</span>
-              <span className="text-sm text-green-400">
-                {resources.metal.toLocaleString()}
-              </span>
-              <span className="text-xs text-green-400">
-                (+{productionRates.metal}/min)
-              </span>
-            </div>
-
-            {/* 晶体 */}
-            <div className="flex items-center gap-1 bg-gray-700 px-2 py-1 rounded">
-              <span className="text-sm font-medium">晶体</span>
-              <span className="text-sm text-green-400">
-                {resources.crystal.toLocaleString()}
-              </span>
-              <span className="text-xs text-green-400">
-                (+{productionRates.crystal}/min)
-              </span>
-            </div>
-
-            {/* 暗物质 */}
-            <div className="flex items-center gap-1 bg-gray-700 px-2 py-1 rounded">
-              <span className="text-sm font-medium">暗物质</span>
-              <span className="text-sm text-purple-400">
-                {resources.darkMatter}
-              </span>
-              {productionRates.darkMatter > 0 && (
-                <span className="text-xs text-purple-400">
-                  (+{productionRates.darkMatter}/min)
+          {/* 底部状态栏 */}
+          <div className="bg-gray-800 border-t border-gray-700 px-4 py-2">
+            <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
+              <div className="flex items-center gap-4">
+                <span>宇宙历 025年</span>
+                <span className="text-blue-400">
+                  正在研究: 超空间理论 (剩余: 45min)
                 </span>
-              )}
+              </div>
+              <div className="flex items-center gap-4">
+                <span className="text-green-400">警报: 无</span>
+                <span>在线</span>
+              </div>
             </div>
-
-            {/* 菜单按钮 */}
-            <button className="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm transition-colors">
-              菜单
-            </button>
           </div>
         </div>
-      </div>
-
-      {/* 主要内容区域 */}
-      <div className="flex flex-1 min-h-0">
-        {/* 侧边栏导航 */}
-        <div className="w-16 md:w-20 bg-gray-800 border-r border-gray-700 flex flex-col items-center py-4 gap-4">
-          <button
-            className={`nav-btn group w-12 h-12 rounded-lg flex flex-col items-center justify-center transition-colors ${
-              currentView === "back"
-                ? "bg-blue-700"
-                : "bg-gray-700 hover:bg-gray-600"
-            }`}
-            onClick={() => handleViewChange("back")}
-          >
-            <span className="text-xs mt-1">星空</span>
-          </button>
-
-          <button
-            className={`nav-btn group w-12 h-12 rounded-lg flex flex-col items-center justify-center transition-colors ${
-              currentView === "building"
-                ? "bg-blue-700"
-                : "bg-gray-700 hover:bg-gray-600"
-            }`}
-            onClick={() => handleViewChange("building")}
-          >
-            <span className="text-xs mt-1">建筑</span>
-          </button>
-
-          <button
-            className={`nav-btn group w-12 h-12 rounded-lg flex flex-col items-center justify-center transition-colors ${
-              currentView === "tech"
-                ? "bg-blue-700"
-                : "bg-gray-700 hover:bg-gray-600"
-            }`}
-            onClick={() => handleViewChange("tech")}
-          >
-            <span className="text-xs mt-1">科技</span>
-          </button>
-
-          <button
-            className={`nav-btn group w-12 h-12 rounded-lg flex flex-col items-center justify-center transition-colors ${
-              currentView === "fleet"
-                ? "bg-blue-700"
-                : "bg-gray-700 hover:bg-gray-600"
-            }`}
-            onClick={() => handleViewChange("fleet")}
-          >
-            <span className="text-xs mt-1">舰队</span>
-          </button>
-
-          <button
-            className={`nav-btn group w-12 h-12 rounded-lg flex flex-col items-center justify-center transition-colors ${
-              currentView === "exploration"
-                ? "bg-blue-700"
-                : "bg-gray-700 hover:bg-gray-600"
-            }`}
-            onClick={() => handleViewChange("exploration")}
-          >
-            <span className="text-xs mt-1">探索</span>
-          </button>
-
-          <button
-            className={`nav-btn group w-12 h-12 rounded-lg flex flex-col items-center justify-center transition-colors ${
-              currentView === "event"
-                ? "bg-blue-700"
-                : "bg-gray-700 hover:bg-gray-600"
-            }`}
-            onClick={() => handleViewChange("event")}
-          >
-            <span className="text-xs mt-1">事件</span>
-          </button>
-        </div>
-
-        {/* 主工作区 */}
-        <div className="flex-1 bg-gray-850 p-4 overflow-auto min-w-0">
-          {renderMainContent()}
-        </div>
-      </div>
-
-      {/* 底部状态栏 */}
-      <div className="bg-gray-800 border-t border-gray-700 px-4 py-2">
-        <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
-          <div className="flex items-center gap-4">
-            <span>宇宙历 025年</span>
-            <span className="text-blue-400">
-              正在研究: 超空间理论 (剩余: 45min)
-            </span>
-          </div>
-          <div className="flex items-center gap-4">
-            <span className="text-green-400">警报: 无</span>
-            <span>在线</span>
-          </div>
-        </div>
-      </div>
-    </div>
+      )}
+    </ResourceManager>
   );
 }
