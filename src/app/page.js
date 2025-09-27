@@ -9,17 +9,31 @@ export default function Home() {
 
   // 资源状态
   const [resources, setResources] = useState({
-    energy: 15000,
-    metal: 8000,
-    crystal: 3500,
-    darkMatter: 125,
+    energy: 0,
+    metal: 0,
+    crystal: 0,
+    darkMatter: 0,
   });
-
+  const [productionRates, setProductionRates] = useState({
+    energy: 20,
+    metal: 0,
+    crystal: 0,
+    darkMatter: 0,
+  });
   // 界面切换函数
   const handleViewChange = (view) => {
     setCurrentView(view);
   };
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setResources((prev) => ({
+        ...prev,
+        energy: prev.energy + productionRates.energy / 60,
+      }));
+    }, 1000);
 
+    return () => clearInterval(interval);
+  }, [productionRates.energy]);
   // 创建3D星空场景组件
   const BackView = () => {
     const containerRef = useRef(null);
@@ -472,7 +486,9 @@ export default function Home() {
               <span className="text-sm text-green-400">
                 {resources.energy.toLocaleString()}
               </span>
-              <span className="text-xs text-green-400">(+205/min)</span>
+              <span className="text-xs text-green-400">
+                (+{productionRates.energy}/min)
+              </span>
             </div>
 
             {/* 金属 */}
@@ -481,7 +497,9 @@ export default function Home() {
               <span className="text-sm text-green-400">
                 {resources.metal.toLocaleString()}
               </span>
-              <span className="text-xs text-green-400">(+150/min)</span>
+              <span className="text-xs text-green-400">
+                (+{productionRates.metal}/min)
+              </span>
             </div>
 
             {/* 晶体 */}
@@ -490,7 +508,9 @@ export default function Home() {
               <span className="text-sm text-green-400">
                 {resources.crystal.toLocaleString()}
               </span>
-              <span className="text-xs text-green-400">(+45/min)</span>
+              <span className="text-xs text-green-400">
+                (+{productionRates.crystal}/min)
+              </span>
             </div>
 
             {/* 暗物质 */}
@@ -499,6 +519,11 @@ export default function Home() {
               <span className="text-sm text-purple-400">
                 {resources.darkMatter}
               </span>
+              {productionRates.darkMatter > 0 && (
+                <span className="text-xs text-purple-400">
+                  (+{productionRates.darkMatter}/min)
+                </span>
+              )}
             </div>
 
             {/* 菜单按钮 */}
