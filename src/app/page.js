@@ -10,7 +10,7 @@ import FleetView from "@/components/views/FleetView";
 import ExplorationView from "@/components/views/ExplorationView";
 import EventView from "@/components/views/EventView";
 import SidebarNav from "@/components/ui/SidebarNav";
-
+import BottomStatus from "@/components/ui/BottomStatus";
 export default function Home() {
   const [currentView, setCurrentView] = useState("back"); // 默认视图
   // 界面切换函数
@@ -62,20 +62,7 @@ export default function Home() {
           </div>
 
           {/* 底部状态栏 */}
-          <div className="bg-gray-800 border-t border-gray-700 px-4 py-2">
-            <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
-              <div className="flex items-center gap-4">
-                <span>宇宙历 025年</span>
-                <span className="text-blue-400">
-                  正在研究: 超空间理论 (剩余: 45min)
-                </span>
-              </div>
-              <div className="flex items-center gap-4">
-                <span className="text-green-400">警报: 无</span>
-                <span>在线</span>
-              </div>
-            </div>
-          </div>
+          <BottomStatus />
         </div>
       )}
     </ResourceManager>

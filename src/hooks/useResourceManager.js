@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 
 // 默认值
 const DEFAULT_ENERGY = 0;
 const DEFAULT_ENERGY_PRODUCTION_RATE = 20;
 const DEFAULT_ENERGY_STORAGE_CAP = 1000;
 
-// 创建资源管理器组件
+// 创建资源管理器组件 - 保持向后兼容
 export const ResourceManager = ({ children }) => {
   const context = useResourceManager();
 
@@ -25,52 +25,42 @@ export const useResourceManager = () => {
   );
 
   const lastUpdateTime = useRef(Date.now());
-  const animationFrameRef = useRef(0);
 
   // 更新能量生产率
-  const updateEnergyProductionRate = useCallback((rate) => {
+  const updateEnergyProductionRate = (rate) => {
     setEnergyProductionRate(rate);
-  }, []);
+  };
 
   // 更新能量存储容量
-  const updateEnergyStorageCap = useCallback((cap) => {
+  const updateEnergyStorageCap = (cap) => {
     setEnergyStorageCap(Math.max(0, cap));
-  }, []);
+  };
 
   // 检查是否足够能量
-  const canAfford = useCallback(
-    (cost) => {
-      return energy >= cost;
-    },
-    [energy]
-  );
+  const canAfford = (cost) => {
+    return energy >= cost;
+  };
 
   // 消耗能量
-  const consumeEnergy = useCallback(
-    (amount) => {
-      if (amount <= 0) return true;
-      if (energy < amount) return false;
+  const consumeEnergy = (amount) => {
+    if (amount <= 0) return true;
+    if (energy < amount) return false;
 
-      setEnergy((prev) => Math.max(0, prev - amount));
-      return true;
-    },
-    [energy]
-  );
+    setEnergy((prev) => Math.max(0, prev - amount));
+    return true;
+  };
 
   // 添加能量
-  const addEnergy = useCallback(
-    (amount) => {
-      if (amount <= 0) return true;
+  const addEnergy = (amount) => {
+    if (amount <= 0) return true;
 
-      setEnergy((prev) => Math.min(prev + amount, energyStorageCap));
-      return true;
-    },
-    [energyStorageCap]
-  );
+    setEnergy((prev) => Math.min(prev + amount, energyStorageCap));
+    return true;
+  };
 
-  // 能量更新循环
+  // 能量更新循环 - 每秒更新一次就够了
   useEffect(() => {
-    const updateEnergy = () => {
+    const interval = setInterval(() => {
       const now = Date.now();
       const deltaTime = (now - lastUpdateTime.current) / 1000 / 60; // 转换为分钟
       lastUpdateTime.current = now;
@@ -79,15 +69,9 @@ export const useResourceManager = () => {
         const newAmount = prev + energyProductionRate * deltaTime;
         return Math.min(newAmount, energyStorageCap);
       });
+    }, 1000); // 每秒更新一次
 
-      animationFrameRef.current = requestAnimationFrame(updateEnergy);
-    };
-
-    animationFrameRef.current = requestAnimationFrame(updateEnergy);
-
-    return () => {
-      cancelAnimationFrame(animationFrameRef.current);
-    };
+    return () => clearInterval(interval);
   }, [energyProductionRate, energyStorageCap]);
 
   return {

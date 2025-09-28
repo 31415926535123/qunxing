@@ -6,16 +6,7 @@ export default function FleetView() {
         {/* 现有舰队 */}
         <div className="bg-gray-800 rounded-lg p-4">
           <h3 className="font-semibold text-blue-300 mb-3">现有舰队</h3>
-          <div className="space-y-2">
-            <div className="fleet-item bg-gray-700 border border-gray-600 rounded p-2">
-              <div className="font-medium text-sm">侦查舰 x 3</div>
-              <div className="text-xs text-gray-400">状态: 待命</div>
-            </div>
-            <div className="fleet-item bg-gray-700 border border-gray-600 rounded p-2">
-              <div className="font-medium text-sm">殖民舰 x 1</div>
-              <div className="text-xs text-gray-400">状态: 建造中</div>
-            </div>
-          </div>
+          <div className="space-y-2"></div>
         </div>
 
         {/* 可建造舰船 */}
@@ -27,16 +18,6 @@ export default function FleetView() {
               <div className="text-xs text-yellow-400">
                 金属: 200 | 晶体: 100
               </div>
-            </div>
-            <div className="ship-item bg-gray-700 border border-gray-600 rounded p-2 hover:bg-gray-600 cursor-pointer">
-              <div className="font-medium text-sm">殖民舰</div>
-              <div className="text-xs text-yellow-400">
-                金属: 1000 | 晶体: 500
-              </div>
-            </div>
-            <div className="ship-item bg-gray-700 border border-gray-600 rounded p-2 opacity-50">
-              <div className="font-medium text-sm">护卫舰</div>
-              <div className="text-xs text-gray-400">需要: 脉冲武器科技</div>
             </div>
           </div>
         </div>
