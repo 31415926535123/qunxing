@@ -2,166 +2,102 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 
-// 资源类型定义
-export const RESOURCE_TYPES = {
-  ENERGY: "energy",
-  METAL: "metal",
-  CRYSTAL: "crystal",
-  DARK_MATTER: "darkMatter",
-  ALLOY: "alloy",
-  RESEARCH_POINTS: "researchPoints",
-};
-
 // 默认值
-const DEFAULT_RESOURCES = {
-  energy: 0,
-  metal: 0,
-  crystal: 0,
-  darkMatter: 0,
-  alloy: 0,
-  researchPoints: 0,
-};
-
-const DEFAULT_PRODUCTION_RATES = {
-  energy: 20,
-  metal: 0,
-  crystal: 0,
-  darkMatter: 0,
-  alloy: 0,
-  researchPoints: 0,
-};
-
-const DEFAULT_STORAGE_CAPS = {
-  energy: 1000,
-  metal: 1000,
-  crystal: 1000,
-  darkMatter: 100,
-  alloy: 500,
-  researchPoints: 1000,
-};
+const DEFAULT_ENERGY = 0;
+const DEFAULT_ENERGY_PRODUCTION_RATE = 20;
+const DEFAULT_ENERGY_STORAGE_CAP = 1000;
 
 // 创建资源管理器组件
 export const ResourceManager = ({ children }) => {
-  const context = useResourceManager(
-    DEFAULT_PRODUCTION_RATES,
-    DEFAULT_STORAGE_CAPS
-  );
+  const context = useResourceManager();
 
   return children(context);
 };
 
-// 简化的资源管理器Hook
-export const useResourceManager = (
-  initialProductionRates = DEFAULT_PRODUCTION_RATES,
-  initialStorageCaps = DEFAULT_STORAGE_CAPS
-) => {
-  const [resources, setResources] = useState(DEFAULT_RESOURCES);
-  const [productionRates, setProductionRates] = useState({
-    ...DEFAULT_PRODUCTION_RATES,
-    ...initialProductionRates,
-  });
-  const [storageCaps, setStorageCaps] = useState({
-    ...DEFAULT_STORAGE_CAPS,
-    ...initialStorageCaps,
-  });
+// 简化的资源管理器Hook - 只管理能量
+export const useResourceManager = () => {
+  const [energy, setEnergy] = useState(DEFAULT_ENERGY);
+  const [energyProductionRate, setEnergyProductionRate] = useState(
+    DEFAULT_ENERGY_PRODUCTION_RATE
+  );
+  const [energyStorageCap, setEnergyStorageCap] = useState(
+    DEFAULT_ENERGY_STORAGE_CAP
+  );
 
   const lastUpdateTime = useRef(Date.now());
   const animationFrameRef = useRef(0);
 
-  // 简化的更新方法
-  const updateProductionRate = useCallback((resource, rate) => {
-    setProductionRates((prev) => ({ ...prev, [resource]: rate }));
+  // 更新能量生产率
+  const updateEnergyProductionRate = useCallback((rate) => {
+    setEnergyProductionRate(rate);
   }, []);
 
-  const updateProductionRates = useCallback((newRates) => {
-    setProductionRates((prev) => ({ ...prev, ...newRates }));
+  // 更新能量存储容量
+  const updateEnergyStorageCap = useCallback((cap) => {
+    setEnergyStorageCap(Math.max(0, cap));
   }, []);
 
-  const updateStorageCap = useCallback((resource, cap) => {
-    setStorageCaps((prev) => ({ ...prev, [resource]: Math.max(0, cap) }));
-  }, []);
-
+  // 检查是否足够能量
   const canAfford = useCallback(
     (cost) => {
-      return Object.entries(cost).every(([resource, amount]) => {
-        if (!amount) return true;
-        return resources[resource] >= amount;
-      });
+      return energy >= cost;
     },
-    [resources]
+    [energy]
   );
 
-  const consumeResource = useCallback(
-    (resource, amount) => {
+  // 消耗能量
+  const consumeEnergy = useCallback(
+    (amount) => {
       if (amount <= 0) return true;
-      if (resources[resource] < amount) return false;
+      if (energy < amount) return false;
 
-      setResources((prev) => ({
-        ...prev,
-        [resource]: Math.max(0, prev[resource] - amount),
-      }));
+      setEnergy((prev) => Math.max(0, prev - amount));
       return true;
     },
-    [resources]
+    [energy]
   );
 
-  const addResource = useCallback(
-    (resource, amount) => {
+  // 添加能量
+  const addEnergy = useCallback(
+    (amount) => {
       if (amount <= 0) return true;
 
-      setResources((prev) => ({
-        ...prev,
-        [resource]: Math.min(prev[resource] + amount, storageCaps[resource]),
-      }));
+      setEnergy((prev) => Math.min(prev + amount, energyStorageCap));
       return true;
     },
-    [storageCaps]
+    [energyStorageCap]
   );
 
-  // 优化的资源更新循环
+  // 能量更新循环
   useEffect(() => {
-    const updateResources = () => {
+    const updateEnergy = () => {
       const now = Date.now();
-      const deltaTime = (now - lastUpdateTime.current) / 1000 / 60; // 直接转换为分钟
+      const deltaTime = (now - lastUpdateTime.current) / 1000 / 60; // 转换为分钟
       lastUpdateTime.current = now;
 
-      setResources((prev) => {
-        const newResources = { ...prev };
-
-        // 只更新有生产的资源
-        Object.entries(productionRates).forEach(([resource, rate]) => {
-          if (rate) {
-            const resourceType = resource;
-            const newAmount = prev[resourceType] + rate * deltaTime;
-            newResources[resourceType] = Math.min(
-              newAmount,
-              storageCaps[resourceType]
-            );
-          }
-        });
-
-        return newResources;
+      setEnergy((prev) => {
+        const newAmount = prev + energyProductionRate * deltaTime;
+        return Math.min(newAmount, energyStorageCap);
       });
 
-      animationFrameRef.current = requestAnimationFrame(updateResources);
+      animationFrameRef.current = requestAnimationFrame(updateEnergy);
     };
 
-    animationFrameRef.current = requestAnimationFrame(updateResources);
+    animationFrameRef.current = requestAnimationFrame(updateEnergy);
 
     return () => {
       cancelAnimationFrame(animationFrameRef.current);
     };
-  }, [productionRates, storageCaps]);
+  }, [energyProductionRate, energyStorageCap]);
 
   return {
-    resources,
-    productionRates,
-    storageCaps,
-    updateProductionRate,
-    updateProductionRates,
-    consumeResource,
-    addResource,
-    updateStorageCap,
+    energy,
+    energyProductionRate,
+    energyStorageCap,
+    updateEnergyProductionRate,
+    updateEnergyStorageCap,
+    consumeEnergy,
+    addEnergy,
     canAfford,
   };
 };

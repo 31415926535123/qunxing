@@ -20,14 +20,15 @@ export default function BackView() {
 
     // 初始化场景
     scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(
-      75,
-      window.innerWidth / window.innerHeight,
-      0.1,
-      1000
-    );
+
+    // 获取容器尺寸
+    const container = containerRef.current;
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+
+    camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
     renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setSize(width, height);
     renderer.setClearColor(0x000011);
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -99,19 +100,31 @@ export default function BackView() {
       renderer.render(scene, camera);
     }
 
-    // 窗口大小调整
-    function onWindowResize() {
-      camera.aspect = window.innerWidth / window.innerHeight;
+    // 容器大小调整
+    function onContainerResize() {
+      if (!containerRef.current) return;
+
+      const width = containerRef.current.clientWidth;
+      const height = containerRef.current.clientHeight;
+
+      camera.aspect = width / height;
       camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setSize(width, height);
     }
 
-    window.addEventListener("resize", onWindowResize);
+    // 使用 ResizeObserver 监听容器尺寸变化
+    const resizeObserver = new ResizeObserver(onContainerResize);
+    if (containerRef.current) {
+      resizeObserver.observe(containerRef.current);
+    }
     createStarField();
     animate();
 
     return () => {
-      window.removeEventListener("resize", onWindowResize);
+      // 断开 ResizeObserver
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      }
 
       if (animationIdRef.current) {
         cancelAnimationFrame(animationIdRef.current);
@@ -140,28 +153,14 @@ export default function BackView() {
   }, []);
 
   return (
-    <div id="container" ref={containerRef}>
-      <div id="info">
-        <h3>3D星空场景</h3>
-        <p>使用鼠标拖拽旋转视角</p>
-        <p>滚轮缩放</p>
-      </div>
+    <div
+      id="container"
+      ref={containerRef}
+      style={{ width: "100%", height: "100%" }}
+    >
       <style jsx>{`
-        #info {
-          position: absolute;
-          top: 10px;
-          left: 10px;
-          color: white;
-          z-index: 100;
-          background: rgba(0, 0, 0, 0.7);
-          padding: 10px;
-          border-radius: 5px;
-        }
         #container canvas {
           display: block;
-          position: absolute;
-          top: 0;
-          left: 0;
           width: 100%;
           height: 100%;
         }

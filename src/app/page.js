@@ -40,12 +40,12 @@ export default function Home() {
 
   return (
     <ResourceManager>
-      {({ resources, productionRates }) => (
+      {({ energy, energyProductionRate }) => (
         <div className="bg-gray-900 text-white min-h-screen flex flex-col">
           {/* 顶部资源栏 */}
           <ResourceBar
-            resources={resources}
-            productionRates={productionRates}
+            energy={energy}
+            energyProductionRate={energyProductionRate}
           />
 
           {/* 主要内容区域 */}
