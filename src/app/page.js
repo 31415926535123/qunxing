@@ -12,12 +12,11 @@ import EventView from "@/components/views/EventView";
 import SidebarNav from "@/components/ui/SidebarNav";
 
 export default function Home() {
-  const [currentView, setCurrentView] = useState("");
+  const [currentView, setCurrentView] = useState("back"); // 默认视图
   // 界面切换函数
   const handleViewChange = (view) => {
     setCurrentView(view);
   };
-
   // 根据当前视图渲染内容
   const renderMainContent = () => {
     switch (currentView) {
