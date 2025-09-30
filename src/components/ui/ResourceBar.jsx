@@ -1,8 +1,15 @@
 "use client";
 
-import React, { memo } from "react";
+import React, { memo, useState, useEffect } from "react";
 
 const ResourceBar = memo(({ energy, energyProductionRate }) => {
+  const [isClient, setIsClient] = useState(false);
+
+  // 确保只在客户端渲染实际数据
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   return (
     <div className="bg-gray-800 border-b border-gray-700 p-2 md:p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -15,7 +22,7 @@ const ResourceBar = memo(({ energy, energyProductionRate }) => {
           <div className="flex items-center gap-1 bg-gray-700 px-2 py-1 rounded">
             <span className="text-sm font-medium">能量</span>
             <span className="text-sm text-green-400">
-              {Math.floor(energy).toLocaleString()}
+              {isClient ? Math.floor(energy).toLocaleString() : "0"}
             </span>
             <span className="text-xs text-green-400">
               (+{energyProductionRate}/min)
