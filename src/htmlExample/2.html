@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Canvas星空</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        background-color: #000;
+        overflow: hidden;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: "Arial", sans-serif;
+      }
+      canvas {
+        display: block;
+      }
+      .info {
+        position: absolute;
+        bottom: 20px;
+        color: #fff;
+        text-align: center;
+        width: 100%;
+        font-size: 14px;
+        opacity: 0.7;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="starsCanvas"></canvas>
+    <div class="info">移动鼠标体验视差效果 | 星星随机分布并闪烁</div>
+
+    <script>
+      const canvas = document.getElementById("starsCanvas");
+      const ctx = canvas.getContext("2d");
+
+      // 设置Canvas大小为窗口大小
+      function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+
+      resizeCanvas();
+      window.addEventListener("resize", resizeCanvas);
+
+      // 星星参数
+      const starCount = 300; // 星星数量
+      const starSize = 2; // 星星大小
+      const stars = [];
+
+      // 初始化星星
+      function initStars() {
+        for (let i = 0; i < starCount; i++) {
+          stars.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            size: starSize,
+            brightness: Math.random() * 0.5 + 0.5, // 初始亮度
+            speed: Math.random() * 0.05, // 闪烁速度
+          });
+        }
+      }
+
+      // 绘制星星
+      function drawStars() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        stars.forEach((star) => {
+          // 更新星星亮度（闪烁效果）
+
+          // 绘制星星
+          ctx.beginPath();
+          ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 255, 255, ${star.brightness})`;
+          ctx.fill();
+        });
+      }
+
+      // 动画循环
+      function animate() {
+        drawStars();
+        requestAnimationFrame(animate);
+      }
+
+      // 初始化并开始动画
+      initStars();
+      animate();
+    </script>
+  </body>
+</html>

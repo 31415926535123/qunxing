@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>动态星空</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background-color: #000;
+        overflow: hidden;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: "Arial", sans-serif;
+      }
+
+      canvas {
+        display: block;
+      }
+
+      .info {
+        position: absolute;
+        bottom: 20px;
+        color: rgba(255, 255, 255, 0.7);
+        text-align: center;
+        width: 100%;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="starfield"></canvas>
+    <div class="info">移动鼠标与星空互动 | 点击切换星星密度</div>
+
+    <script>
+      // 获取Canvas元素和上下文
+      const canvas = document.getElementById("starfield");
+      const ctx = canvas.getContext("2d");
+
+      // 设置Canvas尺寸为窗口大小
+      function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+
+      // 初始化时设置尺寸
+      resizeCanvas();
+      // 窗口大小改变时重新设置尺寸
+      window.addEventListener("resize", resizeCanvas);
+
+      // 星星类
+      class Star {
+        constructor() {
+          this.reset();
+          // 随机设置初始位置
+          this.x = Math.random() * canvas.width;
+          this.y = Math.random() * canvas.height;
+        }
+
+        reset() {
+          // 随机位置
+          this.x = Math.random() * canvas.width;
+          this.y = Math.random() * canvas.height;
+
+          // 随机大小和亮度
+          this.size = Math.random() * 2 + 0.5;
+          this.brightness = Math.random() * 0.5 + 0.5;
+
+          // 闪烁参数
+          this.pulseSpeed = Math.random() * 0.02 + 0.005;
+          this.pulseDirection = Math.random() > 0.5 ? 1 : -1;
+
+          // 移动速度（用于鼠标交互）
+          this.vx = 0;
+          this.vy = 0;
+        }
+
+        update(mouseX, mouseY, mouseRadius) {
+          // 计算星星与鼠标的距离
+          const dx = this.x - mouseX;
+          const dy = this.y - mouseY;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          // 如果星星在鼠标影响范围内
+          if (distance < mouseRadius) {
+            // 计算排斥力
+            const force = (mouseRadius - distance) / mouseRadius;
+            const angle = Math.atan2(dy, dx);
+
+            // 应用排斥力
+            this.vx += Math.cos(angle) * force * 0.5;
+            this.vy += Math.sin(angle) * force * 0.5;
+          }
+
+          // 应用速度
+          this.x += this.vx;
+          this.y += this.vy;
+
+          // 应用摩擦力
+          this.vx *= 0.95;
+          this.vy *= 0.95;
+
+          // 边界检查
+          if (
+            this.x < 0 ||
+            this.x > canvas.width ||
+            this.y < 0 ||
+            this.y > canvas.height
+          ) {
+            this.reset();
+          }
+
+          // 更新闪烁效果
+          this.brightness += this.pulseSpeed * this.pulseDirection;
+          if (this.brightness > 1 || this.brightness < 0.5) {
+            this.pulseDirection *= -1;
+          }
+        }
+
+        draw() {
+          // 绘制星星
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+
+          // 使用径向渐变创建发光效果
+          const gradient = ctx.createRadialGradient(
+            this.x,
+            this.y,
+            0,
+            this.x,
+            this.y,
+            this.size * 2
+          );
+
+          gradient.addColorStop(0, `rgba(255, 255, 255, ${this.brightness})`);
+          gradient.addColorStop(
+            0.5,
+            `rgba(200, 220, 255, ${this.brightness * 0.7})`
+          );
+          gradient.addColorStop(1, "rgba(100, 150, 255, 0)");
+
+          ctx.fillStyle = gradient;
+          ctx.fill();
+        }
+      }
+
+      // 创建星星数组
+      let stars = [];
+      const starCount = 300; // 星星数量
+
+      // 初始化星星
+      function initStars() {
+        stars = [];
+        for (let i = 0; i < starCount; i++) {
+          stars.push(new Star());
+        }
+      }
+
+      initStars();
+
+      // 鼠标位置
+      let mouseX = canvas.width / 2;
+      let mouseY = canvas.height / 2;
+      const mouseRadius = 150; // 鼠标影响半径
+
+      // 跟踪鼠标位置
+      canvas.addEventListener("mousemove", (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+      });
+
+      // 点击切换星星密度
+      canvas.addEventListener("click", () => {
+        // 在低密度和高密度之间切换
+        starCount = starCount === 300 ? 600 : 300;
+        initStars();
+      });
+
+      // 动画循环
+      function animate() {
+        // 清除画布
+        ctx.fillStyle = "rgba(0, 0, 20, 0.1)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // 更新和绘制所有星星
+        stars.forEach((star) => {
+          star.update(mouseX, mouseY, mouseRadius);
+          star.draw();
+        });
+
+        // 继续动画循环
+        requestAnimationFrame(animate);
+      }
+
+      // 启动动画
+      animate();
+    </script>
+  </body>
+</html>

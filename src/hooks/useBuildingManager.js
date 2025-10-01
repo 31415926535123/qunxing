@@ -3,69 +3,16 @@
 import { useState, useEffect, useCallback } from "react";
 import { useEnergy } from "@/hooks/useEnergyManager";
 
-// 建筑数据
-const BUILDINGS_DATA = {
-  solar_panel: {
-    id: "solar_panel",
-    name: "太阳能板",
-    description: "基础能源生产设施",
-    category: "energy_production",
-    base_cost: { metal: 100, crystal: 50 },
-    base_production: { energy: 10 },
-    base_consumption: {},
-    build_time: 30,
-    max_level: 10,
-    upgrade_multiplier: 1.5,
-    production_multiplier: 1.3,
-    requires: [],
-    effects: { energy_production: 10 },
-  },
-  fusion_reactor: {
-    id: "fusion_reactor",
-    name: "聚变反应堆",
-    description: "高效能源生产设施",
-    category: "energy_production",
-    base_cost: { metal: 500, crystal: 200, energy: 100 },
-    base_production: { energy: 50 },
-    base_consumption: {},
-    build_time: 120,
-    max_level: 5,
-    upgrade_multiplier: 2.0,
-    production_multiplier: 1.5,
-    requires: [{ type: "technology", id: "magnetic_confinement_fusion" }],
-    effects: { energy_production: 50 },
-  },
-  metal_mine: {
-    id: "metal_mine",
-    name: "金属矿场",
-    description: "开采金属资源的基础设施",
-    category: "resource_production",
-    base_cost: { metal: 60, energy: 20 },
-    base_production: { metal: 20 },
-    base_consumption: { energy: 5 },
-    build_time: 20,
-    max_level: 15,
-    upgrade_multiplier: 1.4,
-    production_multiplier: 1.25,
-    requires: [],
-    effects: { metal_production: 20 },
-  },
-  crystal_mine: {
-    id: "crystal_mine",
-    name: "晶体矿场",
-    description: "开采晶体资源的基础设施",
-    category: "resource_production",
-    base_cost: { metal: 120, crystal: 30, energy: 30 },
-    base_production: { crystal: 10 },
-    base_consumption: { energy: 8 },
-    build_time: 40,
-    max_level: 12,
-    upgrade_multiplier: 1.5,
-    production_multiplier: 1.3,
-    requires: [{ type: "technology", id: "basic_planetology" }],
-    effects: { crystal_production: 10 },
-  },
-};
+// 从JSON文件导入建筑数据
+import buildingsData from "@/data/buildings.json";
+
+// 将JSON数据转换为扁平化格式以便于使用
+const BUILDINGS_DATA = {};
+Object.values(buildingsData.buildings).forEach((category) => {
+  Object.values(category).forEach((building) => {
+    BUILDINGS_DATA[building.id] = building;
+  });
+});
 
 // 计算建筑升级成本
 const calculateUpgradeCost = (buildingId, currentLevel) => {
@@ -154,13 +101,17 @@ export const useBuildingManager = () => {
       console.warn("Failed to load buildings:", error);
     }
 
-    // 默认建筑状态
-    return {
-      solar_panel: 1,
-      metal_mine: 1,
-      crystal_mine: 0,
-      fusion_reactor: 0,
-    };
+    // 默认建筑状态 - 初始化所有建筑为0级，除了基础建筑
+    const defaultBuildings = {};
+    Object.keys(BUILDINGS_DATA).forEach((buildingId) => {
+      defaultBuildings[buildingId] = 0;
+    });
+
+    // 设置初始建筑
+    defaultBuildings.solar_panel = 1;
+    defaultBuildings.metal_mine = 1;
+
+    return defaultBuildings;
   });
 
   const [buildingQueue, setBuildingQueue] = useState([]);
